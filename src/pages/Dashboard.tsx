@@ -1,0 +1,69 @@
+import { useState } from 'react';
+import './Dashboard.css';
+import Navbar from '../components/Navbar'
+
+interface Grade {
+  id: string;
+  label: string;
+}
+
+export default function Dashboard() {
+  const [selectedGrade, setSelectedGrade] = useState<string | undefined>();
+
+  const grades: Record<string, Grade[]> = {
+    elementary: [
+      { id: 'grade_1', label: 'Grade 1' },
+      { id: 'grade_2', label: 'Grade 2' },
+      { id: 'grade_3', label: 'Grade 3' },
+      { id: 'grade_4', label: 'Grade 4' },
+      { id: 'grade_5', label: 'Grade 5' },
+      { id: 'grade_6', label: 'Grade 6' },
+    ],
+    highschool: [
+      { id: 'grade_7', label: 'Grade 7' },
+      { id: 'grade_8', label: 'Grade 8' },
+      { id: 'grade_9', label: 'Grade 9' },
+      { id: 'grade_10', label: 'Grade 10' },
+    ],
+    seniorhs: [
+      { id: 'grade_11', label: 'Grade 11' },
+      { id: 'grade_12', label: 'Grade 12' },
+    ],
+  };
+
+  const handleGradeClick = (gradeId: string) => {
+    setSelectedGrade(gradeId);
+    console.log('Selected grade:', gradeId);
+    // Send to backend: await fetch('/api/load-grade', { method: 'POST', body: JSON.stringify({ gradeId }) })
+  };
+
+  const renderSection = (title: string, gradeList: Grade[]) => (
+    <div className="section">
+      <h1>{title}</h1>
+      <ul className="section-list">
+        {gradeList.map((grade) => (
+          <li
+            key={grade.id}
+            onClick={() => handleGradeClick(grade.id)}
+            className={`grade-item ${selectedGrade === grade.id ? 'active' : ''}`}
+          >
+            {grade.label}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
+  return (
+    <>
+      <Navbar />
+      <div className="dashboard-main-container">
+        <div className="dashboard-container">
+          {renderSection('Elementary', grades.elementary)}
+          {renderSection('High School', grades.highschool)}
+          {renderSection('Senior HS', grades.seniorhs)}
+        </div>
+      </div>
+    </>
+  );
+}

@@ -1,0 +1,28 @@
+import { app, BrowserWindow, ipcMain } from 'electron'
+import path from 'path'
+
+function createWindow() {
+  const win = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.cjs')
+    }
+  })
+
+  // Load React dev server
+  win.loadURL('http://localhost:5173')
+}
+
+app.whenReady().then(createWindow)
+
+ipcMain.handle('login', async (_, credentials: { username: string; password: string }) => {
+  const { username, password } = credentials
+
+  // Example validation
+  if (username === 'admin' && password === '1234') {
+    return 'Login successful' 
+  } else {
+    return 'Invalid username or password'
+  }
+})
