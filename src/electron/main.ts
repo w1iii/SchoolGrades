@@ -26,3 +26,22 @@ ipcMain.handle('login', async (_, credentials: { username: string; password: str
     return 'Invalid username or password'
   }
 })
+
+ipcMain.handle('getStudents', async (_, gradeYear: { gradeId: string}) => {
+  const { gradeId } = gradeYear
+  
+  const sampledata = [
+      "grade_1",
+      "grade_2",
+      "grade_3",
+      "grade_4",
+      "grade_5",
+    ]
+
+  // Example validation
+  const validGrade = sampledata.includes(gradeId)
+  if (!validGrade){
+    return 
+    }
+      return "grade found"
+  })

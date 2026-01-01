@@ -5,6 +5,8 @@ import { contextBridge, ipcRenderer } from 'electron'
 // })
 
 contextBridge.exposeInMainWorld('api', {
-  login: (credentials: {username: string, password: string}) => ipcRenderer.invoke('login', credentials)
+  login: (credentials: {username: string, password: string}) => ipcRenderer.invoke('login', credentials),
+  getStudents: (gradeYear: {gradeId: string}) => ipcRenderer.invoke('getStudents', gradeYear)
 })
+
 

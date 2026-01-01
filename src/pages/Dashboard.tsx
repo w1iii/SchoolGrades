@@ -1,14 +1,16 @@
-import { useState } from 'react';
-import './Dashboard.css';
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import './Dashboard.css'
 import Navbar from '../components/Navbar'
 
 interface Grade {
-  id: string;
-  label: string;
+  id: string
+  label: string
 }
 
 export default function Dashboard() {
-  const [selectedGrade, setSelectedGrade] = useState<string | undefined>();
+  const [selectedGrade, setSelectedGrade] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   const grades: Record<string, Grade[]> = {
     elementary: [
@@ -29,13 +31,21 @@ export default function Dashboard() {
       { id: 'grade_11', label: 'Grade 11' },
       { id: 'grade_12', label: 'Grade 12' },
     ],
-  };
+  }
 
-  const handleGradeClick = (gradeId: string) => {
-    setSelectedGrade(gradeId);
-    console.log('Selected grade:', gradeId);
-    // Send to backend: await fetch('/api/load-grade', { method: 'POST', body: JSON.stringify({ gradeId }) })
-  };
+  const handleGradeClick = async (gradeId: string) => {
+    setSelectedGrade(gradeId)
+
+    const result = await window.api.getStudents({ gradeId })
+
+    console.log('Selected grade:', gradeId)
+    console.log('IPC result:', result)
+    if(result){
+      navigate('/students')
+    }else{
+      console.log("no grade found")
+    }
+  }
 
   const renderSection = (title: string, gradeList: Grade[]) => (
     <div className="section">
@@ -45,14 +55,16 @@ export default function Dashboard() {
           <li
             key={grade.id}
             onClick={() => handleGradeClick(grade.id)}
-            className={`grade-item ${selectedGrade === grade.id ? 'active' : ''}`}
+            className={`grade-item ${
+              selectedGrade === grade.id ? 'active' : ''
+            }`}
           >
             {grade.label}
           </li>
         ))}
       </ul>
     </div>
-  );
+  )
 
   return (
     <>
@@ -65,5 +77,6 @@ export default function Dashboard() {
         </div>
       </div>
     </>
-  );
+  )
 }
+
