@@ -1,3 +1,4 @@
+
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './Dashboard.css'
@@ -33,18 +34,13 @@ export default function Dashboard() {
     ],
   }
 
-  const handleGradeClick = async (gradeId: string) => {
+  const handleGradeClick = (gradeId: string) => {
     setSelectedGrade(gradeId)
 
-    const result = await window.api.getStudents({ gradeId })
+    // extract number from "grade_10" → 10
+    const gradeNumber = gradeId.split('_')[1]
 
-    console.log('Selected grade:', gradeId)
-    console.log('IPC result:', result)
-    if(result){
-      navigate('/students')
-    }else{
-      console.log("no grade found")
-    }
+    navigate(`/students/${gradeNumber}`)
   }
 
   const renderSection = (title: string, gradeList: Grade[]) => (
@@ -79,4 +75,3 @@ export default function Dashboard() {
     </>
   )
 }
-

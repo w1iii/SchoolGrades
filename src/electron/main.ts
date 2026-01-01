@@ -43,5 +43,5 @@ ipcMain.handle('getStudents', async (_, gradeYear: { gradeId: string}) => {
   if (!validGrade){
     return 
     }
-      return "grade found"
+      return `returned: ${gradeId}`
   })
