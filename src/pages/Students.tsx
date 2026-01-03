@@ -52,26 +52,29 @@ export default function Students() {
     <>
       <Navbar />
       <div className="students-container">
-        <div className="students-header">Students for Grade {gradeYear}</div>
+        <div className="students-sidebar">
+          <div className="students-header">Students for Grade {gradeYear}</div>
         
-        <div className="students-content">
-          {/* Left Sidebar - Student List */}
-          <div className="student-list">
-            {students.map((student) => (
-              <div
-                key={student.id}
-                onClick={() => handleStudentClick(student)}
-                className={`student-item ${selectedStudent?.id === student.id ? 'active' : ''}`}
-              >
-                {student.last_name}, {student.first_name}
-              </div>
-            ))}
+          <div className="students-content">
+            {/* Left Sidebar - Student List */}
+            <div className="student-list">
+              {students.map((student) => (
+                <div
+                  key={student.id}
+                  onClick={() => handleStudentClick(student)}
+                  className={`student-item ${selectedStudent?.id === student.id ? 'active' : ''}`}
+                >
+                  {student.last_name}, {student.first_name}
+                </div>
+              ))}
+            </div>
           </div>
+        </div>
 
           {/* Right Content - Grades Table */}
-          <div className="grades-container">
+        <div className="grades-container">
             {selectedStudent ? (
-              <div>
+              <div className="grades-main-content">
                 <h2>
                   {selectedStudent.last_name}, {selectedStudent.first_name}
                 </h2>
@@ -111,7 +114,6 @@ export default function Students() {
             )}
           </div>
         </div>
-      </div>
     </>
   )
 }
