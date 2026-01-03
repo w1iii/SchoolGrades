@@ -15,6 +15,19 @@
   min-width: 220px;
 }
 
+.searchbar-container{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  gap:0.5rem;
+}
+
+.searchbar{
+  width:10rem;
+  height:2rem;
+}
+
 .students-header {
   color: white;
   font-size: clamp(20px, 3vw, 30px);
@@ -24,6 +37,7 @@
 }
 
 .student-item {
+  text-align:center;
   font-size: clamp(14px, 2vw, 20px);
   padding: 1rem;
   cursor: pointer;
@@ -119,3 +133,4 @@
     padding: 1rem 1.5rem;
   }
 }
+

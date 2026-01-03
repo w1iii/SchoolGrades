@@ -1,7 +1,13 @@
 .navbar-container{
   margin:0;
-  padding:0;
+  padding:1.5rem;
+  padding-bottom:0;
+  padding-top:0;
   display:flex;
   background-color:#063510;
   color:white;
+  justify-content:space-between;
+  align-items:center;
+
 }
+

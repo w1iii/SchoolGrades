@@ -50,11 +50,16 @@ export default function Students() {
 
   return (
     <>
-      <Navbar />
+      <Navbar gradeYear = {gradeYear}/>
       <div className="students-container">
         <div className="students-sidebar">
-          <div className="students-header">Students for Grade {gradeYear}</div>
-        
+
+          {/* INPUT AREA -- SEARCH STUDENT*/}
+          <div className="searchbar-container">
+            <input className="searchbar" type='text'/>
+            <button>search</button>
+          </div>
+
           <div className="students-content">
             {/* Left Sidebar - Student List */}
             <div className="student-list">
