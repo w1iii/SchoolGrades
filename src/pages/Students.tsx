@@ -22,6 +22,9 @@ export default function Students() {
   const [students, setStudents] = useState<Student[]>([])
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
   const [studentGrades, setStudentGrades] = useState<Grade[]>([])
+  const [editingCell, setEditingCell] = useState<string | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const [unsavedChanges, setUnsavedChanges] = useState(false)
 
   useEffect(() => {
     if (!gradeYear) return
@@ -36,6 +39,8 @@ export default function Students() {
 
   const handleStudentClick = async (student: Student) => {
     setSelectedStudent(student)
+    setEditingCell(null)
+    setUnsavedChanges(false)
     const grades = await window.api.getStudentGrades({ studentId: student.id })
     setStudentGrades(grades)
   }
@@ -48,20 +53,81 @@ export default function Students() {
     return Math.round((grades.reduce((a, b) => a + b, 0) / grades.length) * 10) / 10
   }
 
+  const handleGradeChange = (subjectIndex: number, quarter: string, value: string) => {
+    const newGrades = [...studentGrades]
+    const numValue = value === '' ? null : parseInt(value)
+    
+    newGrades[subjectIndex] = {
+      ...newGrades[subjectIndex],
+      [quarter]: numValue,
+    }
+    
+    setStudentGrades(newGrades)
+    setUnsavedChanges(true)
+  }
+
+  const saveGrade = async (subjectIndex: number, quarter: string) => {
+    if (!selectedStudent) return
+    
+    setIsSaving(true)
+    try {
+      await window.api.updateStudentGrade({
+        studentId: selectedStudent.id,
+        subjectIndex,
+        quarter,
+        value: studentGrades[subjectIndex][quarter as keyof Grade],
+      })
+      setUnsavedChanges(false)
+    } catch (error) {
+      console.error('Failed to save grade:', error)
+      alert('Failed to save grade')
+    } finally {
+      setIsSaving(false)
+      setEditingCell(null)
+    }
+  }
+
+  const handleSaveAll = async () => {
+    if (!selectedStudent) return
+    
+    setIsSaving(true)
+    try {
+      await window.api.updateAllStudentGrades({
+        studentId: selectedStudent.id,
+        grades: studentGrades,
+      })
+      setUnsavedChanges(false)
+    } catch (error) {
+      console.error('Failed to save grades:', error)
+      alert('Failed to save grades')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleCellBlur = (subjectIndex: number, quarter: string) => {
+    // Auto-save on blur (instant save on edit)
+    saveGrade(subjectIndex, quarter)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent, subjectIndex: number, quarter: string) => {
+    if (e.key === 'Enter') {
+      saveGrade(subjectIndex, quarter)
+    } else if (e.key === 'Escape') {
+      setEditingCell(null)
+    }
+  }
+
   return (
     <>
-      <Navbar gradeYear = {gradeYear}/>
+      <Navbar gradeYear={gradeYear} />
       <div className="students-container">
         <div className="students-sidebar">
-
-          {/* INPUT AREA -- SEARCH STUDENT*/}
           <div className="searchbar-container">
-            <input className="searchbar" type='text'/>
+            <input className="searchbar" type="text" />
             <button>search</button>
           </div>
-
           <div className="students-content">
-            {/* Left Sidebar - Student List */}
             <div className="student-list">
               {students.map((student) => (
                 <div
@@ -76,49 +142,89 @@ export default function Students() {
           </div>
         </div>
 
-          {/* Right Content - Grades Table */}
         <div className="grades-container">
-            {selectedStudent ? (
-              <div className="grades-main-content">
+          {selectedStudent ? (
+            <div className="grades-main-content">
+              <div className="grades-header">
                 <h2>
                   {selectedStudent.last_name}, {selectedStudent.first_name}
                 </h2>
+                {unsavedChanges && (
+                  <div className="unsaved-indicator">
+                    <span className="dot"></span> Unsaved changes
+                  </div>
+                )}
+              </div>
 
-                {/* Grades Table */}
-                <div className="grades-table-wrapper">
-                  <table className="grades-table">
-                    <thead>
-                      <tr>
-                        <th>Subject</th>
-                        <th>1</th>
-                        <th>2</th>
-                        <th>3</th>
-                        <th>4</th>
-                        <th>Avg</th>
+              <div className="grades-table-wrapper">
+                <table className="grades-table">
+                  <thead>
+                    <tr>
+                      <th>Subject</th>
+                      <th>Q1</th>
+                      <th>Q2</th>
+                      <th>Q3</th>
+                      <th>Q4</th>
+                      <th>Avg</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {studentGrades.map((grade, idx) => (
+                      <tr key={idx}>
+                        <td className="subject-cell">{grade.subject}</td>
+                        {['quarter1', 'quarter2', 'quarter3', 'quarter4'].map((quarter) => {
+                          const cellId = `${idx}-${quarter}`
+                          const isEditing = editingCell === cellId
+                          const value = grade[quarter as keyof Grade]
+
+                          return (
+                            <td
+                              key={quarter}
+                              className="grade-cell"
+                              onClick={() => setEditingCell(cellId)}
+                            >
+                              {isEditing ? (
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="100"
+                                  autoFocus
+                                  value={value ?? ''}
+                                  onChange={(e) =>
+                                    handleGradeChange(idx, quarter, e.target.value)
+                                  }
+                                  onBlur={() => handleCellBlur(idx, quarter)}
+                                  onKeyDown={(e) =>
+                                    handleKeyDown(e, idx, quarter)
+                                  }
+                                  className="grade-input"
+                                />
+                              ) : (
+                                <span className={value === null ? 'null-grade' : ''}>
+                                  {value ?? '-'}
+                                </span>
+                              )}
+                            </td>
+                          )
+                        })}
+                        <td className="average">{calculateAverage(grade)}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {studentGrades.map((grade, idx) => (
-                        <tr key={idx}>
-                          <td>{grade.subject}</td>
-                          <td>{grade.quarter1 ?? '-'}</td>
-                          <td>{grade.quarter2 ?? '-'}</td>
-                          <td>{grade.quarter3 ?? '-'}</td>
-                          <td>{grade.quarter4 ?? '-'}</td>
-                          <td className="average">{calculateAverage(grade)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ) : (
-              <div className="empty-state">
-                <p>Select a student to view grades</p>
+
+              <div className="grades-footer">
+                <p className="hint">Click any cell to edit • Press Enter to save • Esc to cancel</p>
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="empty-state">
+              <p>Select a student to view grades</p>
+            </div>
+          )}
         </div>
+      </div>
     </>
   )
 }
