@@ -101,6 +101,26 @@ ipcMain.handle('getStudentGrades', async (_, { studentId }) => {
   return []
 })
 
-ipcMain.handle('updateAllStudentGrades', async (_,  studentData: {studentId: number; grades: string[] })=>{
-  const {studentId, grades} = studentData
-})
+ipcMain.handle(
+  'updateAllStudentGrades',
+  async (_, { studentId, grades }) => {
+    console.log('SAVE ALL GRADES')
+    console.log('Student ID:', studentId)
+    console.table(grades)
+    return true
+  }
+)
+
+ipcMain.handle(
+  'updateStudentGrade',
+  async (_, { studentId, subjectIndex, quarter, value }) => {
+    console.log('SAVE SINGLE GRADE')
+    console.log({
+      studentId,
+      subjectIndex,
+      quarter,
+      value,
+    })
+    return true
+  }
+)
