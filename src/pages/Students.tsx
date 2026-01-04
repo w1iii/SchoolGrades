@@ -26,6 +26,8 @@ export default function Students() {
   const [isSaving, setIsSaving] = useState(false)
   const [unsavedChanges, setUnsavedChanges] = useState(false)
 
+  // const [generalAverage, setGeneralAverage] = useState<number>()
+
   useEffect(() => {
     if (!gradeYear) return
     const fetchStudents = async () => {
@@ -51,6 +53,22 @@ export default function Students() {
     )
     if (grades.length === 0) return 0
     return Math.round((grades.reduce((a, b) => a + b, 0) / grades.length) * 10) / 10
+  }
+
+  const calculateGeneralAverage = (): number => {
+    if (studentGrades.length === 0) return 0
+
+    const subjectAverages = studentGrades
+      .map((grade) => calculateAverage(grade))
+      .filter((avg) => avg > 0)
+
+    if (subjectAverages.length === 0) return 0
+
+    return (
+      Math.round(
+        (subjectAverages.reduce((a, b) => a + b, 0) / subjectAverages.length) * 10
+      ) / 10
+    )
   }
 
   const handleGradeChange = (subjectIndex: number, quarter: string, value: string) => {
@@ -209,9 +227,14 @@ export default function Students() {
                         })}
                         <td className="average">{calculateAverage(grade)}</td>
                       </tr>
+                      // <div className="general-average">General Avg. {generalAverage(grade)}</div>
                     ))}
                   </tbody>
                 </table>
+                <div className="general-average">
+                  <strong>General Average:</strong> {calculateGeneralAverage()}
+                </div>
+
               </div>
 
               <div className="grades-footer">
