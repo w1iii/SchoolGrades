@@ -100,3 +100,7 @@ ipcMain.handle('getStudentGrades', async (_, { studentId }) => {
   }
   return []
 })
+
+ipcMain.handle('updateAllStudentGrades', async (_,  studentData: {studentId: number; grades: string[] })=>{
+  const {studentId, grades} = studentData
+})
