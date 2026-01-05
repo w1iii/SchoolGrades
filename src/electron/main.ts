@@ -17,11 +17,10 @@ app.whenReady().then(createWindow)
 
 ipcMain.handle('login', async (_, credentials: { username: string; password: string }) => {
   const { username, password } = credentials
-  // Example validation
   if (username === 'admin' && password === '1234') {
-    return 'Login successful' 
+    return true 
   } else {
-    return 'Invalid username or password'
+    return false
   }
 })
 

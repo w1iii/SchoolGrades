@@ -1,0 +1,46 @@
+.login-modal-container{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+
+}
+
+.login-container{
+  display:flex;
+  flex-direction:column;
+  width:22rem;
+  background-color: #556A5A;
+  padding:4rem;
+  gap:0.5rem;
+  border-radius:0.5rem;
+  height:15rem;
+}
+
+.login-input{
+  display:flex;
+  flex-direction:column;
+  gap:0.5rem;
+}
+
+.login-container h1{
+  text-align:center;
+  color:white;
+}
+
+.login-container input{
+  border-radius:0.25rem;
+  border-style:none;
+  height:2rem;
+  font-size:15px;
+}
+
+.login-container button{
+  height:2rem;
+}
+
+.error-login{
+  color:pink;
+  text-align:center;
+
+}
