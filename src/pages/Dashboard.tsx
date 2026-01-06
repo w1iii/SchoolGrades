@@ -64,7 +64,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <Navbar />
+      <Navbar gradeYear={null} isStudents={true}/>
       <div className="dashboard-main-container">
         <div className="dashboard-container">
           {renderSection('Elementary', grades.elementary)}
