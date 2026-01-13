@@ -8,7 +8,7 @@
  .dashboard-container {
   display: flex;
   justify-content:center;
-  gap: 8rem;
+  gap: 3rem;
   min-width:30rem;
   padding:2rem;
 }
