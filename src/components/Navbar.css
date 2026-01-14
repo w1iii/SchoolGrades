@@ -8,8 +8,12 @@
   color:white;
   justify-content:space-between;
   align-items:center;
-  height:5rem;
+  height:5.2rem;
 
+}
+
+.navbar-container img{
+  margin-left:0.5rem;
 }
 
 .return{
@@ -22,3 +26,4 @@
   transition:0.3s;
   color:green;
 }
+
