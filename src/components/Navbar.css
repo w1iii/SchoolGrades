@@ -27,3 +27,16 @@
   color:green;
 }
 
+.navbar-container p{
+  background-color:none;
+  border-style:none;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+
+.navbar-container p:hover{
+  scale:1.1;
+  transition:0.3s;
+}
+
